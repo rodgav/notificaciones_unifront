@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:notificaciones_unifront/app/modules/home/home_binding.dart';
 import 'package:notificaciones_unifront/app/modules/home/home_view.dart';
+import 'package:notificaciones_unifront/app/modules/inicio/inicio_binding.dart';
+import 'package:notificaciones_unifront/app/modules/inicio/inicio_view.dart';
 import 'package:notificaciones_unifront/app/modules/login/login_binding.dart';
 import 'package:notificaciones_unifront/app/modules/login/login_view.dart';
 import 'package:notificaciones_unifront/app/modules/notif_grades/notif_grades_binding.dart';
@@ -47,6 +49,11 @@ class AppPages {
               page: () => HomePage(),
               binding: HomeBinding(),
               children: [
+                GetPage(
+                    preventDuplicates: true,
+                    name: _Paths.inicio,
+                    page: () => InicioPage(),
+                    binding: InicioBinding()),
                 GetPage(
                     preventDuplicates: true,
                     name: _Paths.notifNivels,

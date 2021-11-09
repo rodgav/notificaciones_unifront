@@ -3,6 +3,7 @@ part of 'app_pages.dart';
 abstract class Routes {
   static const login = _Paths.login;
   static const home = _Paths.home;
+  static const inicio = home + _Paths.inicio;
   static const notifNivels = home + _Paths.notifNivels;
 
   static String notifGrades(String idNivel) => '$home/notifGrades/$idNivel';
@@ -22,6 +23,7 @@ abstract class Routes {
 abstract class _Paths {
   static const login = '/login';
   static const home = '/home';
+  static const inicio = '/inicio';
   static const notifNivels = '/notifNivels';
   static const notifGrades = '/notifGrades/:idNivel';
   static const notifSend = '/notifSend/:idNivel/:idGrade';
