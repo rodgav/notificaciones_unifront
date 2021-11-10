@@ -10,6 +10,6 @@ class StudsNivelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Notificaciones Niveles'),);
+    return const Center(child: Text('Estudiantes Niveles'),);
   }
 }

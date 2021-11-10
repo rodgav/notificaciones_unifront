@@ -1,5 +1,201 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class NotifSendLogic extends GetxController {
+  final TextEditingController dateCtrl = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
+  String idNivel;
+  String idGrade;
 
+  NotifSendLogic(this.idNivel, this.idGrade);
+
+  void onSelectDate() async {
+    final picked = await showDatePicker(
+        locale: const Locale('es', 'es_ES'),
+        context: Get.context!,
+        initialDate: _selectedDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(_selectedDate.year + 1));
+    if (picked != null) {
+      _selectedDate = picked;
+      final dayWeek = DateFormat('EEEE', 'es_ES').format(_selectedDate);
+      final day = DateFormat('d', 'es_ES').format(_selectedDate);
+      final month = DateFormat('MMMM', 'es_ES').format(_selectedDate);
+      final year = DateFormat('y', 'es_ES').format(_selectedDate);
+      dateCtrl.text = '$dayWeek $day de $month del $year';
+    }
+  }
+
+  void cancel() {
+    Get.dialog(Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Container(
+          width: 520,
+          height: 256,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.2),
+                          shape: BoxShape.circle),
+                      padding: const EdgeInsets.all(10),
+                      child: const ImageIcon(
+                        AssetImage('assets/icons/trash.png'),
+                        color: Colors.red,
+                      )),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Eliminar progreso',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  const Icon(Icons.close)
+                ],
+              ),
+              const SizedBox(height: 30),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    '¿Está seguro de que desea continuar?',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    'Esta acción eliminará su progreso',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic),
+                  ),
+                ],
+              )),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 125,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.white),
+                        onPressed: () => null,
+                        child: const Text(
+                          'No. Cancelar',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    SizedBox(
+                      width: 125,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.red),
+                        onPressed: () => null,
+                        child: const Text(
+                          'Si. Continuar',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+
+  void send() {
+    Get.dialog(Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Container(
+          width: 520,
+          height: 212,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: const [
+                  Text(
+                    'Enviar notificación',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(child: SizedBox()),
+                  Icon(Icons.close)
+                ],
+              ),
+              const SizedBox(height: 30),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    '¿Está seguro de que desea enviar la notificación?',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              )),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 125,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.white),
+                        onPressed: () => null,
+                        child: const Text(
+                          'No. Regresar',
+                          style: TextStyle(
+                              color: Color(0xff2E65F3),
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    SizedBox(
+                      width: 193,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: const Color(0xff2E65F3)),
+                        onPressed: () => null,
+                        child: const Text(
+                          'Si. Enviar notificación',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
 }
