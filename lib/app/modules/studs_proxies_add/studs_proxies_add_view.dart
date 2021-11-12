@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import 'proxies_logic.dart';
+import 'studs_proxies_add_logic.dart';
 
-class ProxiesPage extends StatelessWidget {
-  final logic = Get.find<ProxiesLogic>();
+class StudsProxiesAddPage extends StatelessWidget {
+  final logic = Get.find<StudsProxiesAddLogic>();
 
-  ProxiesPage({Key? key}) : super(key: key);
+  StudsProxiesAddPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class ProxiesPage extends StatelessWidget {
       AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'Apoderados',
+          'Estudiantes > Preescolar > Grado 1',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
@@ -28,36 +29,20 @@ class ProxiesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Crear apoderados',
+                          'Establecer apoderados',
                           style: TextStyle(
                               fontSize: 40, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          'Agregue un nuevo apoderado, o bien, modifique o elimine un apoderado ya existente',
+                          'Agregue un apoderado a cada estudiante',
                           style: TextStyle(fontSize: 20),
                         ),
                         const SizedBox(height: 50),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: 135,
-                              height: 46,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                    primary: const Color(0xff4C6FFF)),
-                                onPressed: logic.addProxie,
-                                icon: const ImageIcon(
-                                    AssetImage('assets/icons/person-plus.png')),
-                                label: const Text('Agregar'),
-                              ),
-                            )),
-                        const SizedBox(height: 50),
-                        const Text(
-                          'Estudiantes con apoderado establecido',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
-                        ),
+                         const Text(
+                            'Estudiantes sin apoderado establecido',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
                         const SizedBox(height: 20),
                         Center(
                           child: SingleChildScrollView(
@@ -97,32 +82,16 @@ class ProxiesPage extends StatelessWidget {
                                 DataCell(SizedBox(
                                     width: size.width * 0.1,
                                     child: const Text('Katia Alejandra'))),
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage(
-                                              'assets/icons/pencil-square.png'),
-                                          color: Color(0xffF4C300),
-                                        ),
-                                        onTap: () => logic.editProxie(123),
-                                      ),
+                                DataCell(MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    child: const ImageIcon(
+                                      AssetImage(
+                                          'assets/icons/person-plus.png'),
+                                      color: Colors.green,
                                     ),
-                                    const SizedBox(width: 15),
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage('assets/icons/trash1.png'),
-                                          color: Color(0xffF16063),
-                                        ),
-                                        onTap: () => logic.deleteProxie(123),
-                                      ),
-                                    ),
-                                  ],
+                                    onTap: ()=>logic.addProxie(size),
+                                  ),
                                 )),
                               ]),
                             ]),

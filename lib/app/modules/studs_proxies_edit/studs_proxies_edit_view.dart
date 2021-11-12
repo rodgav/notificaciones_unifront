@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'proxies_logic.dart';
+import 'studs_proxies_edit_logic.dart';
 
-class ProxiesPage extends StatelessWidget {
-  final logic = Get.find<ProxiesLogic>();
+class StudsProxiesEditPage extends StatelessWidget {
+  final logic = Get.find<StudsProxiesEditLogic>();
 
-  ProxiesPage({Key? key}) : super(key: key);
+  StudsProxiesEditPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ProxiesPage extends StatelessWidget {
       AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'Apoderados',
+          'Estudiantes > Preescolar > Grado 1',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
@@ -28,30 +28,15 @@ class ProxiesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Crear apoderados',
+                          'Apoderados establecidos',
                           style: TextStyle(
                               fontSize: 40, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          'Agregue un nuevo apoderado, o bien, modifique o elimine un apoderado ya existente',
+                          'Consulte, modifique o elimine el apoderado de un estudiante',
                           style: TextStyle(fontSize: 20),
                         ),
-                        const SizedBox(height: 50),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: 135,
-                              height: 46,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                    primary: const Color(0xff4C6FFF)),
-                                onPressed: logic.addProxie,
-                                icon: const ImageIcon(
-                                    AssetImage('assets/icons/person-plus.png')),
-                                label: const Text('Agregar'),
-                              ),
-                            )),
                         const SizedBox(height: 50),
                         const Text(
                           'Estudiantes con apoderado establecido',
@@ -108,7 +93,17 @@ class ProxiesPage extends StatelessWidget {
                                               'assets/icons/pencil-square.png'),
                                           color: Color(0xffF4C300),
                                         ),
-                                        onTap: () => logic.editProxie(123),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        child: const ImageIcon(
+                                          AssetImage('assets/icons/search.png'),
+                                          color: Color(0xff4C6FFF),
+                                        ),
+                                        onTap: logic.search,
                                       ),
                                     ),
                                     const SizedBox(width: 15),
@@ -119,7 +114,7 @@ class ProxiesPage extends StatelessWidget {
                                           AssetImage('assets/icons/trash1.png'),
                                           color: Color(0xffF16063),
                                         ),
-                                        onTap: () => logic.deleteProxie(123),
+                                        onTap: logic.delete,
                                       ),
                                     ),
                                   ],

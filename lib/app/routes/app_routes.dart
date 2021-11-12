@@ -15,9 +15,16 @@ abstract class Routes {
   static String studsGrades(String idNivel) => '$home/studsGrades/$idNivel';
 
   static String studsProxies(String idNivel, String idGrade) =>
-      '$home/studsProxies/$idNivel';
+      '$home/studsProxies/$idNivel/$idGrade';
+
+  static String studsProxiesAdd(
+          String idNivel, String idGrade, String idState) =>
+      '$home/studsProxiesAdd/$idNivel/$idGrade/$idState';
+
+  static String studsProxiesEdit(
+          String idNivel, String idGrade, String idState) =>
+      '$home/studsProxiesEdit/$idNivel/$idGrade/$idState';
   static const proxies = home + _Paths.proxies;
-  static const proxsNew = home + _Paths.proxsNew;
 }
 
 abstract class _Paths {
@@ -30,6 +37,7 @@ abstract class _Paths {
   static const studsNivels = '/studsNivels';
   static const studsGrades = '/studsGrades/:idNivel';
   static const studsProxies = '/studsProxies/:idNivel/:idGrade';
+  static const studsProxiesAdd = '/studsProxiesAdd/:idNivel/:idGrade/:idState';
+  static const studsProxiesEdit = '/studsProxiesEdit/:idNivel/:idGrade/:idState';
   static const proxies = '/proxies';
-  static const proxsNew = '/proxsNew';
 }

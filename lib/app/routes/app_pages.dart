@@ -13,8 +13,6 @@ import 'package:notificaciones_unifront/app/modules/notif_send/notif_send_bindin
 import 'package:notificaciones_unifront/app/modules/notif_send/notif_send_view.dart';
 import 'package:notificaciones_unifront/app/modules/proxies/proxies_binding.dart';
 import 'package:notificaciones_unifront/app/modules/proxies/proxies_view.dart';
-import 'package:notificaciones_unifront/app/modules/proxs_new/proxs_new_binding.dart';
-import 'package:notificaciones_unifront/app/modules/proxs_new/proxs_new_view.dart';
 import 'package:notificaciones_unifront/app/modules/root/root_binding.dart';
 import 'package:notificaciones_unifront/app/modules/root/root_view.dart';
 import 'package:notificaciones_unifront/app/modules/studs_grades/studs_grades_binding.dart';
@@ -23,6 +21,10 @@ import 'package:notificaciones_unifront/app/modules/studs_nivels/studs_nivels_bi
 import 'package:notificaciones_unifront/app/modules/studs_nivels/studs_nivels_view.dart';
 import 'package:notificaciones_unifront/app/modules/studs_proxies/studs_proxies_binding.dart';
 import 'package:notificaciones_unifront/app/modules/studs_proxies/studs_proxies_view.dart';
+import 'package:notificaciones_unifront/app/modules/studs_proxies_add/studs_proxies_add_binding.dart';
+import 'package:notificaciones_unifront/app/modules/studs_proxies_add/studs_proxies_add_view.dart';
+import 'package:notificaciones_unifront/app/modules/studs_proxies_edit/studs_proxies_edit_binding.dart';
+import 'package:notificaciones_unifront/app/modules/studs_proxies_edit/studs_proxies_edit_view.dart';
 
 part 'app_routes.dart';
 
@@ -86,14 +88,19 @@ class AppPages {
                     binding: StudsProxiesBinding()),
                 GetPage(
                     preventDuplicates: true,
+                    name: _Paths.studsProxiesAdd,
+                    page: () => StudsProxiesAddPage(),
+                    binding: StudsProxiesAddBinding()),
+                GetPage(
+                    preventDuplicates: true,
+                    name: _Paths.studsProxiesEdit,
+                    page: () => StudsProxiesEditPage(),
+                    binding: StudsProxiesEditBinding()),
+                GetPage(
+                    preventDuplicates: true,
                     name: _Paths.proxies,
                     page: () => ProxiesPage(),
                     binding: ProxiesBinding()),
-                GetPage(
-                    preventDuplicates: true,
-                    name: _Paths.proxsNew,
-                    page: () => ProxsNewPage(),
-                    binding: ProxsNewBinding()),
               ])
         ])
   ];
