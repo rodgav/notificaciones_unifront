@@ -93,6 +93,7 @@ class StudsProxiesEditPage extends StatelessWidget {
                                               'assets/icons/pencil-square.png'),
                                           color: Color(0xffF4C300),
                                         ),
+                                        onTap: ()=> logic.editProxie(size),
                                       ),
                                     ),
                                     const SizedBox(width: 15),

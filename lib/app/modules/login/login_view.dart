@@ -69,59 +69,65 @@ class LoginPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60),
             child: Form(
+                key: logic.formKey,
                 child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '¡Bienvenido(a)!',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-                const Text(
-                  '¡Creemos notificaciones!',
-                  style: TextStyle(fontSize: 18),
-                ),
-                const SizedBox(height: 50),
-                const Text(
-                  'Usuario',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Ingrese su usuario',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6)),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                const Text(
-                  'Contraseña',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Ingrese su contraseña',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6)),
-                  ),
-                ),
-                const SizedBox(height: 50),
-                SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xff4C6FFF),
-                            padding: const EdgeInsets.all(10)),
-                        onPressed: logic.toHome,
-                        child: const Text(
-                          'Ingresar',
-                          style: TextStyle(fontSize: 16),
-                        )))
-              ],
-            )),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '¡Bienvenido(a)!',
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      '¡Creemos notificaciones!',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 50),
+                    const Text(
+                      'Usuario',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: logic.correoCtrl,
+                      validator: (value) => logic.validateEmail(value),
+                      decoration: InputDecoration(
+                        hintText: 'Ingrese su usuario',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    const Text(
+                      'Contraseña',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: logic.passwordCtrl,
+                      validator: (value) => logic.isNotEmpty(value),
+                      decoration: InputDecoration(
+                        hintText: 'Ingrese su contraseña',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    SizedBox(
+                        width: double.infinity,
+                        height: 46,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: const Color(0xff4C6FFF),
+                                padding: const EdgeInsets.all(10)),
+                            onPressed: logic.toHome,
+                            child: const Text(
+                              'Ingresar',
+                              style: TextStyle(fontSize: 16),
+                            )))
+                  ],
+                )),
           ),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:notificaciones_unifront/app/data/middlewares/auth_middleware.dart';
 import 'package:notificaciones_unifront/app/modules/home/home_binding.dart';
 import 'package:notificaciones_unifront/app/modules/home/home_view.dart';
 import 'package:notificaciones_unifront/app/modules/inicio/inicio_binding.dart';
@@ -41,11 +42,13 @@ class AppPages {
         preventDuplicates: true,
         children: [
           GetPage(
+              middlewares: [EnsureNotAuthMiddleware()],
               preventDuplicates: true,
               name: _Paths.login,
               page: () => LoginPage(),
               binding: LoginBinding()),
           GetPage(
+              middlewares: [EnsureAuthMiddleware()],
               preventDuplicates: true,
               name: _Paths.home,
               page: () => HomePage(),

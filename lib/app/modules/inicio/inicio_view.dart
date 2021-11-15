@@ -85,7 +85,7 @@ class InicioPage extends StatelessWidget {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       primary: const Color(0xff3754DB)),
-                                  onPressed: () => null,
+                                  onPressed: logic.toNotifys,
                                   child: const Text('Comenzar'),
                                 ),
                               ),
@@ -122,7 +122,7 @@ class InicioPage extends StatelessWidget {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       primary: const Color(0xff3754DB)),
-                                  onPressed: () => null,
+                                  onPressed: logic.students,
                                   child: const Text('Comenzar'),
                                 ),
                               ),
@@ -159,7 +159,7 @@ class InicioPage extends StatelessWidget {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       primary: const Color(0xff3754DB)),
-                                  onPressed: () => null,
+                                  onPressed: logic.toProxies,
                                   child: const Text('Comenzar'),
                                 ),
                               ),

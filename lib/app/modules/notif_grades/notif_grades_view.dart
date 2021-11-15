@@ -40,82 +40,70 @@ class NotifGradesPage extends StatelessWidget {
                               fontSize: 40, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 50),
-                        LayoutBuilder(builder: (context, constaints) {
-                          final count = constaints.maxWidth ~/ tileWidth;
-                          return GridView(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: count,
-                                    childAspectRatio:tileWidth  / tileHeight,
-                                    crossAxisSpacing: spacing,
-                                    mainAxisSpacing: spacing),
-                            children: [
-                              MouseRegion(cursor:SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xff1E4280),
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: const Center(
-                                        child: Text(
-                                      'Grado 1°',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                  ),
-                                  onTap: ()=> logic.toSendNoti(123),
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: const Color(0xffF4C300),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: const Center(
-                                    child: Text(
-                                  'Grado 2°',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                )),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: const Color(0xff1E4280),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: const Center(
-                                    child: Text(
-                                  'Grado 3°',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                )),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: const Color(0xffF4C300),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: const Center(
-                                    child: Text(
-                                  'Todos los\ngrados',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                )),
-                              ),
-                            ],
-                          );
-                        }),
+                        GetBuilder<NotifGradesLogic>(
+                            id: 'subniveles',
+                            builder: (_) {
+                              final subNivelModel = _.subNivelModel;
+                              return subNivelModel != null
+                                  ? subNivelModel.subNiveles.isNotEmpty
+                                      ? LayoutBuilder(
+                                          builder: (context, constaints) {
+                                          final count =
+                                              constaints.maxWidth ~/ tileWidth;
+                                          return GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: count,
+                                                    childAspectRatio:
+                                                        tileWidth / tileHeight,
+                                                    crossAxisSpacing: spacing,
+                                                    mainAxisSpacing: spacing),
+                                            itemBuilder: (__, index) {
+                                              final subNivel = subNivelModel.subNiveles[index];
+                                              return MouseRegion(
+                                                cursor:
+                                                    SystemMouseCursors.click,
+                                                child: GestureDetector(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Color(
+                                                            index % 2 == 0
+                                                                ? 0xff1E4280
+                                                                : 0xffF4C300),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8)),
+                                                    child: Center(
+                                                        child: Text(
+                                                          subNivel.name,
+                                                      style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 40,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    )),
+                                                  ),
+                                                  onTap: () =>
+                                                      logic.toSendNoti(subNivel.id),
+                                                ),
+                                              );
+                                            },
+                                            itemCount:
+                                                subNivelModel.subNiveles.length,
+                                          );
+                                        })
+                                      : const Center(
+                                          child: Text('Datos no encontrados'),
+                                        )
+                                  : const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                            }),
                         const SizedBox(height: 20),
                       ]))))
     ]);
