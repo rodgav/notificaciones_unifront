@@ -14,13 +14,19 @@ class NotifGradesPage extends StatelessWidget {
     const tileWidth = 300.0;
     const spacing = 20.0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Notificaciones > Preescolar',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ),
+      GetBuilder<NotifGradesLogic>(
+          id: 'title',
+          builder: (_) {
+            final nivel = _.nivele;
+            return AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Notificaciones >  ${nivel != null ? nivel.name : ''}',
+                style:
+                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            );
+          }),
       Expanded(
           child: Padding(
               padding: const EdgeInsets.only(top: 60, right: 60, left: 60),
@@ -62,7 +68,8 @@ class NotifGradesPage extends StatelessWidget {
                                                     crossAxisSpacing: spacing,
                                                     mainAxisSpacing: spacing),
                                             itemBuilder: (__, index) {
-                                              final subNivel = subNivelModel.subNiveles[index];
+                                              final subNivel = subNivelModel
+                                                  .subNiveles[index];
                                               return MouseRegion(
                                                 cursor:
                                                     SystemMouseCursors.click,
@@ -78,7 +85,7 @@ class NotifGradesPage extends StatelessWidget {
                                                                 .circular(8)),
                                                     child: Center(
                                                         child: Text(
-                                                          subNivel.name,
+                                                      subNivel.name,
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 40,
@@ -88,8 +95,8 @@ class NotifGradesPage extends StatelessWidget {
                                                           TextAlign.center,
                                                     )),
                                                   ),
-                                                  onTap: () =>
-                                                      logic.toSendNoti(subNivel.id),
+                                                  onTap: () => logic
+                                                      .toSendNoti(subNivel.id),
                                                 ),
                                               );
                                             },

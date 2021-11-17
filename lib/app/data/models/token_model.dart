@@ -4,22 +4,35 @@
 
 import 'dart:convert';
 
-TokenModel tokenModelFromJson(String str) => TokenModel.fromJson(json.decode(str));
+TokenModel tokenModelFromJson(String str) =>
+    TokenModel.fromJson(json.decode(str));
 
 String tokenModelToJson(TokenModel data) => json.encode(data.toJson());
 
 class TokenModel {
   TokenModel({
-    required this.token,
+    required this.status,
+    required this.message,
+    required this.code,
+    required this.jwt,
   });
 
-  String token;
+  String status;
+  String message;
+  int code;
+  String? jwt;
 
   factory TokenModel.fromJson(Map<String, dynamic> json) => TokenModel(
-    token: json["token"],
-  );
+        status: json["status"],
+        message: json["message"],
+        code: json["code"],
+        jwt: json["jwt"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "token": token,
-  };
+        "status": status,
+        "message": message,
+        "code": code,
+        "jwt": jwt,
+      };
 }

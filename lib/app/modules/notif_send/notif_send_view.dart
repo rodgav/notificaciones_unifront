@@ -11,13 +11,20 @@ class NotifSendPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Notificaciones > Preescolar > Grado 1',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ),
+      GetBuilder<NotifSendLogic>(
+          id: 'title',
+          builder: (_) {
+            final subNivel = _.subNivele;
+            final nivel = _.nivele;
+            return AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Notificaciones > ${nivel != null ? nivel.name : ''} > ${subNivel!=null ? subNivel.name  : ''}',
+                style:
+                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            );
+          }),
       Expanded(
           child: Padding(
               padding: const EdgeInsets.only(top: 60, right: 60, left: 60),

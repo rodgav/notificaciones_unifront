@@ -6,22 +6,24 @@ class HomeLogic extends GetxController {
 
   String get selectDrawer => _selectDrawer;
 
-  void onSelectDrawer(String select) {
+  void onSelectDrawer(String select, bool nav) {
     _selectDrawer = select;
     update(['drawer']);
-    switch (select) {
-      case 'Inicio':
-        Get.rootDelegate.toNamed(Routes.inicio);
-        break;
-      case 'Notificaciones':
-        Get.rootDelegate.toNamed(Routes.notifNivels);
-        break;
-      case 'Estudiantes':
-        Get.rootDelegate.toNamed(Routes.studsNivels);
-        break;
-      case 'Apoderados':
-        Get.rootDelegate.toNamed(Routes.proxies);
-        break;
+    if (nav) {
+      switch (select) {
+        case 'Inicio':
+          Get.rootDelegate.toNamed(Routes.inicio);
+          break;
+        case 'Notificaciones':
+          Get.rootDelegate.toNamed(Routes.notifNivels);
+          break;
+        case 'Estudiantes':
+          Get.rootDelegate.toNamed(Routes.studsNivels);
+          break;
+        case 'Apoderados':
+          Get.rootDelegate.toNamed(Routes.proxies);
+          break;
+      }
     }
   }
 }

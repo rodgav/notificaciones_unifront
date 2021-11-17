@@ -1,7 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notificaciones_unifront/app/data/models/estudiante_model.dart';
+import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
+import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class StudsProxiesEditLogic extends GetxController {
+  String idNivel;
+  String idGrade;
+
+  StudsProxiesEditLogic(this.idNivel, this.idGrade);
+
+  final _dbRepository = Get.find<DbRepository>();
+
+  EstudianteModel? _estudianteModel;
+  Estudiante? _estudiante;
+  Nivele? _nivele;
+  SubNivele? _subNivele;
+
+  EstudianteModel? get estudianteModel => _estudianteModel;
+
+  Estudiante? get estudiante => _estudiante;
+
+  Nivele? get nivele => _nivele;
+
+  SubNivele? get subNivele => _subNivele;
+
+  @override
+  void onReady() {
+    _getSubNivel();
+    _getEstudiantes();
+    super.onReady();
+  }
+
+  void _getSubNivel() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _nivele = await _dbRepository.getNivel(token: token, idNivel: idNivel);
+      _subNivele =
+          await _dbRepository.getSubNivel(token: token, idSubNivel: idGrade);
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['title']);
+  }
+
+  void _getEstudiantes() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _estudianteModel = await _dbRepository.getEstudiantesNoApoderado(
+          token: token, idSubNivel: idGrade);
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['students']);
+  }
+
   void delete() {
     Get.dialog(Scaffold(
       backgroundColor: Colors.transparent,
@@ -126,86 +182,88 @@ class StudsProxiesEditLogic extends GetxController {
               ),
               Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 306,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'Apellido(s)',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(height: 5),
-                                Container(
-                                  color: Colors.white,
-                                  child: TextFormField(
-                                    enabled: false,
-                                    decoration: InputDecoration(
-                                      hintText: 'Sanchez Vazquez',
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6)),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      SizedBox(
+                        width: 306,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Apellido(s)',
+                              style: TextStyle(fontSize: 16),
                             ),
-                          ),
-                          SizedBox(
-                            width: 306,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'Nombre(s)',
-                                  style: TextStyle(fontSize: 16),
+                            const SizedBox(height: 5),
+                            Container(
+                              color: Colors.white,
+                              child: TextFormField(
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: 'Sanchez Vazquez',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6)),
                                 ),
-                                const SizedBox(height: 5),
-                                Container(
-                                  color: Colors.white,
-                                  child: TextFormField(enabled: false,
-                                    decoration: InputDecoration(
-                                      hintText: 'Ixchel Alejandra',
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(6)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Correo electrónico',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 5),
-                          Container(
-                            color: Colors.white,
-                            child: TextFormField(enabled: false,
-                              decoration: InputDecoration(
-                                hintText: 'ixchel.sanchez@uabc.edu.mx',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6)),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 306,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Nombre(s)',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 5),
+                            Container(
+                              color: Colors.white,
+                              child: TextFormField(
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: 'Ixchel Alejandra',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     ],
-                  )),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Correo electrónico',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 5),
+                      Container(
+                        color: Colors.white,
+                        child: TextFormField(
+                          enabled: false,
+                          decoration: InputDecoration(
+                            hintText: 'ixchel.sanchez@uabc.edu.mx',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              )),
               Align(
                 alignment: Alignment.bottomRight,
                 child: SizedBox(
@@ -284,23 +342,23 @@ class StudsProxiesEditLogic extends GetxController {
               const SizedBox(height: 30),
               Expanded(
                   child: SingleChildScrollView(
-                    physics:const BouncingScrollPhysics(),
-                    child: DataTable(columns:const [
-                      DataColumn(label: Text('#')),
-                      DataColumn(label: Text('ApellidoS')),
-                      DataColumn(label: Text('Nombre(s)')),
-                      DataColumn(label: Text('CORREO ELECTRONICO')),
-                      DataColumn(label: Text('Accion')),
-                    ], rows: [
-                      DataRow(cells: [
-                        const DataCell(Text('1')),
-                        const DataCell(Text('García Encino')),
-                        const DataCell(Text('Katia Alejandra')),
-                        const DataCell(Text('katialejandra0@outlook.com')),
-                        DataCell(Checkbox(value: true, onChanged: (value)=>null)),
-                      ])
-                    ]),
-                  )),
+                physics: const BouncingScrollPhysics(),
+                child: DataTable(columns: const [
+                  DataColumn(label: Text('#')),
+                  DataColumn(label: Text('ApellidoS')),
+                  DataColumn(label: Text('Nombre(s)')),
+                  DataColumn(label: Text('CORREO ELECTRONICO')),
+                  DataColumn(label: Text('Accion')),
+                ], rows: [
+                  DataRow(cells: [
+                    const DataCell(Text('1')),
+                    const DataCell(Text('García Encino')),
+                    const DataCell(Text('Katia Alejandra')),
+                    const DataCell(Text('katialejandra0@outlook.com')),
+                    DataCell(Checkbox(value: true, onChanged: (value) => null)),
+                  ])
+                ]),
+              )),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(

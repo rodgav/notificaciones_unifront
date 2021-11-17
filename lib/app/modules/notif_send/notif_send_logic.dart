@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
+import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class NotifSendLogic extends GetxController {
-  final TextEditingController dateCtrl = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
   String idNivel;
   String idGrade;
 
   NotifSendLogic(this.idNivel, this.idGrade);
+
+  final _dbRepository = Get.find<DbRepository>();
+  final TextEditingController dateCtrl = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
+  Nivele? _nivele;
+  SubNivele? _subNivele;
+
+  Nivele? get nivele => _nivele;
+
+  SubNivele? get subNivele => _subNivele;
+
+  @override
+  void onReady() {
+    _getSubNivel();
+    super.onReady();
+  }
+
+  void _getSubNivel() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _nivele = await _dbRepository.getNivel(token: token, idNivel: idNivel);
+      _subNivele =
+          await _dbRepository.getSubNivel(token: token, idSubNivel: idGrade);
+    }else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['title']);
+  }
 
   void onSelectDate() async {
     final picked = await showDatePicker(
@@ -198,6 +229,7 @@ class NotifSendLogic extends GetxController {
       ),
     ));
   }
+
   void _success() {
     Get.dialog(Scaffold(
       backgroundColor: Colors.transparent,
@@ -212,7 +244,8 @@ class NotifSendLogic extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                decoration: const BoxDecoration(color: Colors.green,shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                    color: Colors.green, shape: BoxShape.circle),
                 padding: const EdgeInsets.all(10),
                 child: const Icon(Icons.check, color: Colors.white),
               ),

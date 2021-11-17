@@ -10,15 +10,24 @@ class StudsProxiesEditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Estudiantes > Preescolar > Grado 1',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ),
+      GetBuilder<StudsProxiesEditLogic>(
+          id: 'title',
+          builder: (_) {
+            final subNivel = _.subNivele;
+            final nivel = _.nivele;
+            return AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Estudiantes > ${nivel != null ? nivel.name : ''} > ${subNivel!=null ? subNivel.name  : ''}',
+                style:
+                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            );
+          }),
       Expanded(
           child: Padding(
               padding: const EdgeInsets.only(top: 60, right: 60, left: 60),
@@ -45,84 +54,100 @@ class StudsProxiesEditPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Center(
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: DataTable(columns: const [
-                              DataColumn(
-                                  label: Text('#',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('MATRICULA',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('APELLIDOS',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('NOMBRES',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('ACCIONES',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                            ], rows: [
-                              DataRow(cells: [
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('1'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('354281'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('García Encino'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('Katia Alejandra'))),
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage(
-                                              'assets/icons/pencil-square.png'),
-                                          color: Color(0xffF4C300),
+                          child: GetBuilder<StudsProxiesEditLogic>(id: 'students',builder: (_) {
+                            final estudianteModel = _.estudianteModel;
+                            return estudianteModel != null
+                                ? estudianteModel.estudiantes.isNotEmpty
+                                ? SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: DataTable(columns: const [
+                                DataColumn(
+                                    label: Text('#',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('MATRICULA',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('APELLIDOS',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('NOMBRES',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('ACCIONES',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                              ], rows: estudianteModel.estudiantes.map((e) {
+                                int index = estudianteModel
+                                    .estudiantes
+                                    .indexOf(e)+1;
+                                return DataRow(cells: [
+                                  DataCell(SizedBox(
+                                      width: size.width * 0.1,
+                                      child:  Text(index.toString()))),
+                                  DataCell(SizedBox(
+                                      width: size.width * 0.1,
+                                      child:  Text(e.id.toString()))),
+                                  DataCell(SizedBox(
+                                      width: size.width * 0.1,
+                                      child:  Text(e.lastname))),
+                                  DataCell(SizedBox(
+                                      width: size.width * 0.1,
+                                      child:  Text(e.name))),
+                                  DataCell(Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          child: const ImageIcon(
+                                            AssetImage(
+                                                'assets/icons/pencil-square.png'),
+                                            color: Color(0xffF4C300),
+                                          ),
+                                          onTap: () => logic.editProxie(size),
                                         ),
-                                        onTap: ()=> logic.editProxie(size),
                                       ),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage('assets/icons/search.png'),
-                                          color: Color(0xff4C6FFF),
+                                      const SizedBox(width: 15),
+                                      MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          child: const ImageIcon(
+                                            AssetImage(
+                                                'assets/icons/search.png'),
+                                            color: Color(0xff4C6FFF),
+                                          ),
+                                          onTap: logic.search,
                                         ),
-                                        onTap: logic.search,
                                       ),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage('assets/icons/trash1.png'),
-                                          color: Color(0xffF16063),
+                                      const SizedBox(width: 15),
+                                      MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          child: const ImageIcon(
+                                            AssetImage(
+                                                'assets/icons/trash1.png'),
+                                            color: Color(0xffF16063),
+                                          ),
+                                          onTap: logic.delete,
                                         ),
-                                        onTap: logic.delete,
                                       ),
-                                    ),
-                                  ],
-                                )),
-                              ]),
-                            ]),
-                          ),
+                                    ],
+                                  )),
+                                ]);
+                              }
+                                  ).toList()),
+                            ): const Center(
+                              child: Text('No hay datos'),
+                            )
+                                : const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                         ),
                         const SizedBox(height: 20),
                       ]))))

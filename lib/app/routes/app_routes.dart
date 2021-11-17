@@ -22,12 +22,12 @@ abstract class Routes {
       '$home/studsProxies/$idNivel/$idGrade';
 
   static String studsProxiesAdd(
-          String idNivel, String idGrade, String idState) =>
-      '$home/studsProxiesAdd/$idNivel/$idGrade/$idState';
+          String idNivel, String idGrade) =>
+      '$home/studsProxiesAdd/$idNivel/$idGrade';
 
   static String studsProxiesEdit(
-          String idNivel, String idGrade, String idState) =>
-      '$home/studsProxiesEdit/$idNivel/$idGrade/$idState';
+          String idNivel, String idGrade) =>
+      '$home/studsProxiesEdit/$idNivel/$idGrade';
   static const proxies = home + _Paths.proxies;
 }
 
@@ -41,7 +41,7 @@ abstract class _Paths {
   static const studsNivels = '/studsNivels';
   static const studsGrades = '/studsGrades/:idNivel';
   static const studsProxies = '/studsProxies/:idNivel/:idGrade';
-  static const studsProxiesAdd = '/studsProxiesAdd/:idNivel/:idGrade/:idState';
-  static const studsProxiesEdit = '/studsProxiesEdit/:idNivel/:idGrade/:idState';
+  static const studsProxiesAdd = '/studsProxiesAdd/:idNivel/:idGrade';
+  static const studsProxiesEdit = '/studsProxiesEdit/:idNivel/:idGrade';
   static const proxies = '/proxies';
 }

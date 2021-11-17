@@ -14,7 +14,7 @@ class LoginLogic extends GetxController {
     if (formKey.currentState!.validate()) {
       final tokenModel = await _dbRepository.login(
           correo: correoCtrl.text.trim(), password: passwordCtrl.text.trim());
-      if (tokenModel != null) {
+      if (tokenModel != null && tokenModel.jwt != null) {
         await AuthService.to.saveSession(tokenModel);
         Get.rootDelegate.toNamed(Routes.home);
       } else {
@@ -25,8 +25,8 @@ class LoginLogic extends GetxController {
 
   @override
   void onReady() {
-    correoCtrl.text='prueba@gmail.com';
-    passwordCtrl.text='12345678';
+    correoCtrl.text = 'prueba@gmail.com';
+    passwordCtrl.text = '12345678';
     super.onReady();
   }
 

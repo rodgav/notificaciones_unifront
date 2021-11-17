@@ -6,6 +6,6 @@ class StudsProxiesAddBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => StudsProxiesAddLogic(Get.parameters['idNivel'] ?? '',
-        Get.parameters['idGrade'] ?? '', Get.parameters['idState'] ?? ''));
+        Get.parameters['idGrade'] ?? ''));
   }
 }

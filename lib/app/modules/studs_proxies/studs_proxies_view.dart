@@ -14,13 +14,20 @@ class StudsProxiesPage extends StatelessWidget {
     const tileWidth = 450.0;
     const spacing = 20.0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Estudiantes > Preescolar > Grado 1',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ),
+      GetBuilder<StudsProxiesLogic>(
+          id: 'title',
+          builder: (_) {
+            final subNivel = _.subNivele;
+            final nivel = _.nivele;
+            return AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                'Estudiantes > ${nivel != null ? nivel.name : ''} > ${subNivel!=null ? subNivel.name  : ''}',
+                style:
+                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            );
+          }),
       Expanded(
           child: Padding(
               padding: const EdgeInsets.only(top: 60, right: 60, left: 60),
@@ -69,7 +76,7 @@ class StudsProxiesPage extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                     )),
                                   ),
-                                  onTap: () => logic.toStudsProxiesAdd(123),
+                                  onTap: logic.toStudsProxiesAdd,
                                 ),
                               ),
                               MouseRegion(
@@ -89,7 +96,7 @@ class StudsProxiesPage extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                     )),
                                   ),
-                                  onTap: () => logic.toStudsProxiesEdit(123),
+                                  onTap:  logic.toStudsProxiesEdit,
                                 ),
                               )
                             ],

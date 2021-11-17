@@ -1,12 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notificaciones_unifront/app/data/models/estudiante_model.dart';
+import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
+import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
+import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class StudsProxiesAddLogic extends GetxController {
   String idNivel;
   String idGrade;
-  String idState;
 
-  StudsProxiesAddLogic(this.idNivel, this.idGrade, this.idState);
+  StudsProxiesAddLogic(this.idNivel, this.idGrade);
+
+  final _dbRepository = Get.find<DbRepository>();
+
+  EstudianteModel? _estudianteModel;
+  Estudiante? _estudiante;
+  Nivele? _nivele;
+  SubNivele? _subNivele;
+
+  EstudianteModel? get estudianteModel => _estudianteModel;
+
+  Estudiante? get estudiante => _estudiante;
+
+  Nivele? get nivele => _nivele;
+
+  SubNivele? get subNivele => _subNivele;
+
+  @override
+  void onReady() {_getSubNivel();
+    _getEstudiantes();
+    super.onReady();
+  }
+
+  void _getSubNivel() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _nivele = await _dbRepository.getNivel(token: token, idNivel: idNivel);
+      _subNivele =
+          await _dbRepository.getSubNivel(token: token, idSubNivel: idGrade);
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['title']);
+  }
+
+  void _getEstudiantes() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _estudianteModel = await _dbRepository.getEstudiantesNoApoderado(
+          token: token, idSubNivel: idGrade);
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['students']);
+  }
 
   void addProxie(Size size) {
     Get.dialog(Scaffold(
@@ -62,8 +111,8 @@ class StudsProxiesAddLogic extends GetxController {
               const SizedBox(height: 30),
               Expanded(
                   child: SingleChildScrollView(
-                physics:const BouncingScrollPhysics(),
-                child: DataTable(columns:const [
+                physics: const BouncingScrollPhysics(),
+                child: DataTable(columns: const [
                   DataColumn(label: Text('#')),
                   DataColumn(label: Text('ApellidoS')),
                   DataColumn(label: Text('Nombre(s)')),
@@ -75,7 +124,7 @@ class StudsProxiesAddLogic extends GetxController {
                     const DataCell(Text('García Encino')),
                     const DataCell(Text('Katia Alejandra')),
                     const DataCell(Text('katialejandra0@outlook.com')),
-                    DataCell(Checkbox(value: true, onChanged: (value)=>null)),
+                    DataCell(Checkbox(value: true, onChanged: (value) => null)),
                   ])
                 ]),
               )),
