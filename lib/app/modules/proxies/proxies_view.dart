@@ -10,7 +10,9 @@ class ProxiesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       AppBar(
         backgroundColor: Colors.white,
@@ -60,73 +62,120 @@ class ProxiesPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Center(
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: DataTable(columns: const [
-                              DataColumn(
-                                  label: Text('#',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('MATRICULA',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('APELLIDOS',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('NOMBRES',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              DataColumn(
-                                  label: Text('ACCIONES',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                            ], rows: [
-                              DataRow(cells: [
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('1'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('354281'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('García Encino'))),
-                                DataCell(SizedBox(
-                                    width: size.width * 0.1,
-                                    child: const Text('Katia Alejandra'))),
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage(
-                                              'assets/icons/pencil-square.png'),
-                                          color: Color(0xffF4C300),
-                                        ),
-                                        onTap: () => logic.editProxie(123),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        child: const ImageIcon(
-                                          AssetImage('assets/icons/trash1.png'),
-                                          color: Color(0xffF16063),
-                                        ),
-                                        onTap: () => logic.deleteProxie(123),
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                              ]),
-                            ]),
-                          ),
+                          child: GetBuilder<ProxiesLogic>(
+                              id: 'apoderados',
+                              builder: (_) {
+                                final apoderadoModel = _.apoderadoModel;
+                                return apoderadoModel != null ? apoderadoModel
+                                    .apoderados.isNotEmpty ?
+                                SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: DataTable(columns: const [
+                                    DataColumn(
+                                        label: Text('#',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+
+                                    DataColumn(
+                                        label: Text('APELLIDOS',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('NOMBRES',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),      DataColumn(
+                                        label: Text('CORREO',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('ACCIONES',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                  ], rows: apoderadoModel.apoderados.map((e) {
+                                    int index = apoderadoModel
+                                        .apoderados
+                                        .indexOf(e)+1;
+                                    return DataRow(cells: [
+                                      DataCell(SizedBox(
+                                          width:
+                                          size.width *
+                                              0.1,
+                                          child:
+                                          Text(
+                                              index.toString()))),
+
+                                      DataCell(SizedBox(
+                                          width:
+                                          size.width *
+                                              0.1,
+                                          child: Text(
+                                              e.name))),
+                                      DataCell(SizedBox(
+                                          width:
+                                          size.width *
+                                              0.1,
+                                          child: Text(
+                                              e.lastname))),
+                                      DataCell(SizedBox(
+                                          width:
+                                          size.width *
+                                              0.1,
+                                          child: Text(
+                                              e.correo))),
+                                      DataCell(Row(
+                                        mainAxisSize:
+                                        MainAxisSize
+                                            .min,
+                                        children: [
+                                          MouseRegion(
+                                            cursor:
+                                            SystemMouseCursors
+                                                .click,
+                                            child:
+                                            GestureDetector(
+                                              child:
+                                              const ImageIcon(
+                                                AssetImage(
+                                                    'assets/icons/pencil-square.png'),
+                                                color: Color(
+                                                    0xffF4C300),
+                                              ),
+                                              onTap: () =>
+                                                  logic.editProxie(
+                                                      e),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                              width: 15),
+                                          MouseRegion(
+                                            cursor:
+                                            SystemMouseCursors
+                                                .click,
+                                            child:
+                                            GestureDetector(
+                                              child:
+                                              const ImageIcon(
+                                                AssetImage(
+                                                    'assets/icons/trash1.png'),
+                                                color: Color(
+                                                    0xffF16063),
+                                              ),
+                                              onTap: () =>
+                                                  logic.deleteProxie(
+                                                      e.id),
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                    ]);
+                                  }).toList()),
+                                ) : const Center(
+                                  child: Text('No hay datos'),
+                                )
+                                    : const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }),
                         ),
                         const SizedBox(height: 20),
                       ]))))

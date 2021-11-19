@@ -47,10 +47,23 @@ class DbRepository {
       _dbProvider.createApoderado(
           token: token, name: name, lastname: lastname, correo: correo);
 
+  Future<bool> updateApoderado(
+          {required String token,
+          required int id,
+          required String name,
+          required String lastname,
+          required String correo}) =>
+      _dbProvider.updateApoderado(
+          token: token, id: id, name: name, lastname: lastname, correo: correo);
+
   Future<ApoderadoModel?> getApoderadoLastName(
           {required String token, required String lastName}) =>
       _dbProvider.getApoderadoLastName(token: token, lastName: lastName);
 
   Future<ApoderadoModel?> getApoderado({required String token}) =>
       _dbProvider.getApoderado(token: token);
+
+  Future<Apoderado?> deleteApoderado(
+          {required String token, required int id}) =>
+      _dbProvider.deleteApoderado(token: token, id: id);
 }

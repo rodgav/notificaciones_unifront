@@ -50,7 +50,7 @@ class StudsProxiesEditLogic extends GetxController {
   void _getEstudiantes() async {
     final token = await AuthService.to.getToken();
     if (token != null) {
-      _estudianteModel = await _dbRepository.getEstudiantesNoApoderado(
+      _estudianteModel = await _dbRepository.getEstudiantesApoderado(
           token: token, idSubNivel: idGrade);
     } else {
       Get.rootDelegate.toNamed(Routes.login);

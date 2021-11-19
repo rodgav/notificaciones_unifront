@@ -19,7 +19,6 @@ class DbProvider {
       final json = {'correo': correo, 'password': password};
       final result = await _http.request('loginAdmin',
           method: HttpMethod.post, body: {'json': jsonEncode(json)});
-      debugPrint('result ${result.data}');
       return TokenModel.fromJson(result.data);
     } catch (_) {
       return null;
@@ -54,7 +53,6 @@ class DbProvider {
           headers: {'Authorization': token},
           queryParameters: {'idNivel': idNivel});
       final data = result.data as Map<String, dynamic>;
-      debugPrint('data ${data['nivel']}');
       return Nivele.fromJson(data['nivel']);
     } catch (_) {
       return null;
@@ -82,7 +80,6 @@ class DbProvider {
           headers: {'Authorization': token},
           queryParameters: {'idSubNivel': idSubNivel});
       final data = result.data as Map<String, dynamic>;
-      debugPrint('data ${data['sub_nivel']}');
       return SubNivele.fromJson(data['sub_nivel']);
     } catch (_) {
       return null;
@@ -120,15 +117,68 @@ class DbProvider {
       required String name,
       required String lastname,
       required String correo}) async {
+    final password = name.replaceAll(' ', '');
     try {
-      final json = {'name': name, 'lastname': lastname, 'correo': correo};
+      final json = {
+        'name': name,
+        'lastname': lastname,
+        'correo': correo,
+        'password': password
+      };
       final result = await _http.request('apoderado',
           method: HttpMethod.post,
           headers: {'Authorization': token},
           body: {'json': jsonEncode(json)});
+      final data = result.data as Map<String, dynamic>;
+      return Apoderado.fromJson(data['apoderado']);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<bool> updateApoderado(
+      {required String token,
+      required int id,
+      required String name,
+      required String lastname,
+      required String correo}) async {
+    final password = name.toLowerCase().replaceAll(' ', '');
+    try {
+      final json = {
+        'name': name,
+        'lastname': lastname,
+        'correo': correo,
+        'password': password
+      };
+      final result = await _http.request('apoderado/$id',
+          method: HttpMethod.put,
+          headers: {'Authorization': token},
+          body: {'json': jsonEncode(json)});
       debugPrint('result ${result.data}');
       final data = result.data as Map<String, dynamic>;
-      debugPrint('apoderado ${data['apoderado']}');
+      if (data['status'] == 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<Apoderado?> deleteApoderado(
+      {required String token,
+      required int id}) async {
+    try {
+      final json = {
+        'role': 'proxie'
+      };
+      final result = await _http.request('apoderado/$id',
+          method: HttpMethod.delete,
+          headers: {'Authorization': token},
+          body: {'json': jsonEncode(json)});
+      debugPrint('result ${result.data}');
+      final data = result.data as Map<String, dynamic>;
       return Apoderado.fromJson(data['apoderado']);
     } catch (_) {
       return null;
