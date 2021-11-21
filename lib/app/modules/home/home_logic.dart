@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/data/services/dialog_service.dart';
 import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class HomeLogic extends GetxController {
@@ -24,6 +27,16 @@ class HomeLogic extends GetxController {
           Get.rootDelegate.toNamed(Routes.proxies);
           break;
       }
+    }
+  }
+
+  void logOut() async {
+    final logOut = await AuthService.to.eraseSession();
+    if (logOut) {
+      Get.rootDelegate.toNamed(Routes.login);
+    }else{
+      DialogService.to.snackBar(
+          Colors.red, 'ERROR', 'No se pudo cerrar sesión, intentelo mas tarde');
     }
   }
 }

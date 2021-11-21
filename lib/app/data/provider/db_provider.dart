@@ -305,4 +305,19 @@ class DbProvider {
       return false;
     }
   }
+
+  Future<bool> logOut({required String token}) async {
+    try {
+      final result = await _http.request('logOut',
+          method: HttpMethod.post, headers: {'Authorization': token});
+      final data = result.data as Map<String, dynamic>;
+      if (data['status'] == 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
 }

@@ -27,8 +27,13 @@ class AuthService extends GetxService {
             .toString());
   }
 
-  Future<void> eraseSession() async {
-    await _getStorage.erase();
+  Future<bool> eraseSession() async {
+    final token = await _getStorage.read('jwt') ?? '';
+    final logOut = await _dbRepository.logOut(token: token);
+    if (logOut) {
+      await _getStorage.erase();
+    }
+    return logOut;
   }
 
   Future<String?> getToken() async {

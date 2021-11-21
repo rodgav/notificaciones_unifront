@@ -110,13 +110,14 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const ListTile(
+                        ListTile(
                           leading:
-                              ImageIcon(AssetImage('assets/icons/close.png')),
-                          title: Text(
+                          const ImageIcon(AssetImage('assets/icons/close.png')),
+                          title:const Text(
                             'Cerrar sesión',
                             style: TextStyle(color: Color(0xff425466)),
                           ),
+                          onTap: _.logOut,
                         ),
                       ],
                     ),

@@ -108,4 +108,7 @@ class DbRepository {
           title: title,
           message: message,
           dateTime: dateTime);
+
+  Future<bool> logOut({required String token}) =>
+      _dbProvider.logOut(token: token);
 }
