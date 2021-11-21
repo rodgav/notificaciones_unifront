@@ -39,6 +39,23 @@ class DbRepository {
           {required String token, required String idSubNivel}) =>
       _dbProvider.getEstudiantesApoderado(token: token, idSubNivel: idSubNivel);
 
+  Future<bool> updateEstudiante(
+          {required String token,
+          required int idapoderado,
+          required int id,
+          required String name,
+          required String lastname,
+          required String correo,
+          required int idSubNivel}) =>
+      _dbProvider.updateEstudiante(
+          token: token,
+          idapoderado: idapoderado,
+          id: id,
+          name: name,
+          lastname: lastname,
+          correo: correo,
+          idSubNivel: idSubNivel);
+
   Future<Apoderado?> createApoderado(
           {required String token,
           required String name,
@@ -60,10 +77,35 @@ class DbRepository {
           {required String token, required String lastName}) =>
       _dbProvider.getApoderadoLastName(token: token, lastName: lastName);
 
-  Future<ApoderadoModel?> getApoderado({required String token}) =>
-      _dbProvider.getApoderado(token: token);
+  Future<ApoderadoModel?> getApoderados({required String token}) =>
+      _dbProvider.getApoderados(token: token);
+
+  Future<Apoderado?> getApoderado(
+          {required String token, required String idApoderado}) =>
+      _dbProvider.getApoderado(token: token, idApoderado: idApoderado);
 
   Future<Apoderado?> deleteApoderado(
           {required String token, required int id}) =>
       _dbProvider.deleteApoderado(token: token, id: id);
+
+  Future<bool> sendNotifAll(
+          {required String token,
+          required String title,
+          required String message,
+          required DateTime dateTime}) =>
+      _dbProvider.sendNotifAll(
+          token: token, title: title, message: message, dateTime: dateTime);
+
+  Future<bool> sendNotifGra(
+          {required String token,
+          required String idSubNivel,
+          required String title,
+          required String message,
+          required DateTime dateTime}) =>
+      _dbProvider.sendNotifGra(
+          token: token,
+          idSubNivel: idSubNivel,
+          title: title,
+          message: message,
+          dateTime: dateTime);
 }

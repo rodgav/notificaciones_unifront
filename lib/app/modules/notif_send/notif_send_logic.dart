@@ -5,6 +5,7 @@ import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
 import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/data/services/dialog_service.dart';
 import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class NotifSendLogic extends GetxController {
@@ -13,7 +14,10 @@ class NotifSendLogic extends GetxController {
 
   NotifSendLogic(this.idNivel, this.idGrade);
 
+  final formKey = GlobalKey<FormState>();
   final _dbRepository = Get.find<DbRepository>();
+  final TextEditingController titleCtrl = TextEditingController();
+  final TextEditingController messageCtrl = TextEditingController();
   final TextEditingController dateCtrl = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   Nivele? _nivele;
@@ -35,7 +39,7 @@ class NotifSendLogic extends GetxController {
       _nivele = await _dbRepository.getNivel(token: token, idNivel: idNivel);
       _subNivele =
           await _dbRepository.getSubNivel(token: token, idSubNivel: idGrade);
-    }else {
+    } else {
       Get.rootDelegate.toNamed(Routes.login);
     }
     update(['title']);
@@ -166,13 +170,14 @@ class NotifSendLogic extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Enviar notificación',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Expanded(child: SizedBox()),
-                  Icon(Icons.close)
+                  const Expanded(child: SizedBox()),
+                  IconButton(
+                      icon: const Icon(Icons.close), onPressed: _closeDialog)
                 ],
               ),
               const SizedBox(height: 30),
@@ -196,7 +201,7 @@ class NotifSendLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.white),
-                        onPressed: () => null,
+                        onPressed: _closeDialog,
                         child: const Text(
                           'No. Regresar',
                           style: TextStyle(
@@ -212,7 +217,43 @@ class NotifSendLogic extends GetxController {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             primary: const Color(0xff2E65F3)),
-                        onPressed: _success,
+                        onPressed: () async {
+                          final token = await AuthService.to.getToken();
+                          if (token != null) {
+                            if (idGrade == '0') {
+                              DialogService.to.openDialog();
+                              final send = await _dbRepository.sendNotifAll(
+                                  token: token,
+                                  title: titleCtrl.text.trim(),
+                                  message: messageCtrl.text.trim(),
+                                  dateTime: _selectedDate);
+                              DialogService.to.closeDialog();
+                              if (send) {
+                                _success();
+                              } else {
+                                DialogService.to.snackBar(Colors.red, 'ERROR',
+                                    'No pudimos enviar la notiricación');
+                              }
+                            } else {
+                              DialogService.to.openDialog();
+                              final send = await _dbRepository.sendNotifGra(
+                                  token: token,
+                                  idSubNivel: idGrade,
+                                  title: titleCtrl.text.trim(),
+                                  message: messageCtrl.text.trim(),
+                                  dateTime: _selectedDate);
+                              DialogService.to.closeDialog();
+                              if (send) {
+                                _success();
+                              } else {
+                                DialogService.to.snackBar(Colors.red, 'ERROR',
+                                    'No pudimos enviar la notiricación');
+                              }
+                            }
+                          } else {
+                            Get.rootDelegate.toNamed(Routes.login);
+                          }
+                        },
                         child: const Text(
                           'Si. Enviar notificación',
                           style: TextStyle(
@@ -267,7 +308,13 @@ class NotifSendLogic extends GetxController {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       primary: const Color(0xff2E65F3)),
-                  onPressed: () => null,
+                  onPressed: () {
+                    dateCtrl.clear();
+                    titleCtrl.clear();
+                    messageCtrl.clear();
+                    _closeDialog();
+                    _closeDialog();
+                  },
                   child: const Text(
                     'Aceptar',
                     style: TextStyle(
@@ -280,5 +327,14 @@ class NotifSendLogic extends GetxController {
         ),
       ),
     ));
+  }
+
+  String? isNotEmpty(String? value, String label) {
+    if (value != null) if (value.isNotEmpty) return null;
+    return 'Ingrese $label';
+  }
+
+  void _closeDialog() {
+    Get.back();
   }
 }

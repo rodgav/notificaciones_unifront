@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notificaciones_unifront/app/data/models/apoderado_model.dart';
 import 'package:notificaciones_unifront/app/data/models/estudiante_model.dart';
 import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
 import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/data/services/dialog_service.dart';
 import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class StudsProxiesEditLogic extends GetxController {
@@ -13,12 +15,16 @@ class StudsProxiesEditLogic extends GetxController {
 
   StudsProxiesEditLogic(this.idNivel, this.idGrade);
 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _lastNameCtrl = TextEditingController();
   final _dbRepository = Get.find<DbRepository>();
 
   EstudianteModel? _estudianteModel;
   Estudiante? _estudiante;
   Nivele? _nivele;
   SubNivele? _subNivele;
+  ApoderadoModel? _apoderadoModel;
+  Apoderado? _apoderado;
 
   EstudianteModel? get estudianteModel => _estudianteModel;
 
@@ -27,6 +33,10 @@ class StudsProxiesEditLogic extends GetxController {
   Nivele? get nivele => _nivele;
 
   SubNivele? get subNivele => _subNivele;
+
+  ApoderadoModel? get apoderadoModel => _apoderadoModel;
+
+  Apoderado? get apoderado => _apoderado;
 
   @override
   void onReady() {
@@ -58,7 +68,7 @@ class StudsProxiesEditLogic extends GetxController {
     update(['students']);
   }
 
-  void delete() {
+  void delete(Estudiante e) {
     Get.dialog(Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
@@ -88,7 +98,9 @@ class StudsProxiesEditLogic extends GetxController {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const Expanded(child: SizedBox()),
-                  const Icon(Icons.close)
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _closeDialog)
                 ],
               ),
               const SizedBox(height: 30),
@@ -120,7 +132,7 @@ class StudsProxiesEditLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.white),
-                        onPressed: () => null,
+                        onPressed: _closeDialog,
                         child: const Text(
                           'No. Cancelar',
                           style: TextStyle(
@@ -134,7 +146,35 @@ class StudsProxiesEditLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.red),
-                        onPressed: () => null,
+                        onPressed: () async{
+                          final token = await AuthService.to.getToken();
+                          if (token != null) {
+                            DialogService.to.openDialog();
+                            final estudianteUpd =
+                                await _dbRepository.updateEstudiante(
+                                token: token,
+                                idapoderado: 0,
+                                id: e.id,
+                                name: e.name,
+                                lastname: e.lastname,
+                                correo: e.correo,
+                                idSubNivel: e.idSubNivel);
+                            DialogService.to.closeDialog();
+                            if (estudianteUpd) {
+                              _estudianteModel!.estudiantes.removeWhere(
+                                      (element) => element.id == e.id);
+                              _apoderadoModel = null;
+                              update(['students', 'apoderados']);
+                              _lastNameCtrl.clear();
+                              _closeDialog();
+                            } else {
+                              DialogService.to.snackBar(Colors.red, 'ERROR',
+                                  'No pudimos eliminar el apoderado');
+                            }
+                          } else {
+                            Get.rootDelegate.toNamed(Routes.login);
+                          }
+                        },
                         child: const Text(
                           'Si. Continuar',
                           style: TextStyle(
@@ -152,143 +192,173 @@ class StudsProxiesEditLogic extends GetxController {
     ));
   }
 
-  void search() {
-    Get.dialog(Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: Container(
-          width: 725,
-          height: 444,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: const [
-                  Text(
-                    'Consultar apoderado',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Expanded(child: SizedBox()),
-                  Icon(Icons.close)
-                ],
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Información correspondiente al apoderado del estudiante.',
-                style: TextStyle(fontSize: 14),
-              ),
-              Expanded(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  void search(int idApoderado) async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      DialogService.to.openDialog();
+      final apoderado = await _dbRepository.getApoderado(
+          token: token, idApoderado: idApoderado.toString());
+      DialogService.to.closeDialog();
+      if (apoderado != null) {
+        Get.dialog(Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Container(
+              width: 725,
+              height: 444,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(12)),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 306,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Apellido(s)',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              color: Colors.white,
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  hintText: 'Sanchez Vazquez',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6)),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 306,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Nombre(s)',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              color: Colors.white,
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  hintText: 'Ixchel Alejandra',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6)),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Correo electrónico',
-                        style: TextStyle(fontSize: 16),
+                        'Consultar apoderado',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 5),
-                      Container(
-                        color: Colors.white,
-                        child: TextFormField(
-                          enabled: false,
-                          decoration: InputDecoration(
-                            hintText: 'ixchel.sanchez@uabc.edu.mx',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6)),
+                      const Expanded(child: SizedBox()),
+                      IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: _closeDialog)
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Información correspondiente al apoderado del estudiante.',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  Expanded(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 306,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Apellido(s)',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                const SizedBox(height: 5),
+                                Container(
+                                  color: Colors.white,
+                                  child: TextFormField(
+                                    enabled: false,
+                                    decoration: InputDecoration(
+                                      hintText: apoderado.lastname,
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          SizedBox(
+                            width: 306,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Nombre(s)',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                const SizedBox(height: 5),
+                                Container(
+                                  color: Colors.white,
+                                  child: TextFormField(
+                                    enabled: false,
+                                    decoration: InputDecoration(
+                                      hintText: apoderado.name,
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Correo electrónico',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 5),
+                          Container(
+                            color: Colors.white,
+                            child: TextFormField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                hintText: apoderado.correo,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  )),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
+                      width: 125,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: const Color(0xff2E65F3)),
+                        onPressed: _closeDialog,
+                        child: const Text(
+                          'Cerrar ventana',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ],
+                    ),
                   )
                 ],
-              )),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: SizedBox(
-                  width: 125,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: const Color(0xff2E65F3)),
-                    onPressed: () => null,
-                    child: const Text(
-                      'Cerrar ventana',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              )
-            ],
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
+      } else {
+        DialogService.to
+            .snackBar(Colors.red, 'ERROR', 'No se encontro un apoderado');
+      }
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
   }
 
-  void editProxie(Size size) {
+  void _getApoderados() async {
+    final token = await AuthService.to.getToken();
+    if (token != null) {
+      _apoderadoModel = await _dbRepository.getApoderadoLastName(
+          token: token, lastName: _lastNameCtrl.text.trim());
+    } else {
+      Get.rootDelegate.toNamed(Routes.login);
+    }
+    update(['apoderados']);
+  }
+
+  void editProxie(Size size, Estudiante e) {
     Get.dialog(Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
@@ -302,63 +372,102 @@ class StudsProxiesEditLogic extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Modificar apoderado',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Expanded(child: SizedBox()),
-                  Icon(Icons.close)
+                  const Expanded(child: SizedBox()),
+                  IconButton(
+                      icon: const Icon(Icons.close), onPressed: _closeDialog)
                 ],
               ),
               const SizedBox(height: 10),
               const Text(
-                'En la siguiente tabla, seleccione el nuevo apoderado para el estudiante.',
+                'En la siguiente tabla, seleccione un nuevo apoderado para el estudiante.',
                 style: TextStyle(fontSize: 14),
               ),
               const SizedBox(height: 30),
               Container(
                 color: Colors.white,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    suffixIcon: MouseRegion(
-                      child: GestureDetector(
-                          child: const Padding(
-                            padding: EdgeInsets.all(10),
-                            child: ImageIcon(
-                              AssetImage('assets/icons/search.png'),
-                              color: Colors.black,
-                              size: 15,
-                            ),
-                          ),
-                          onTap: () => null),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _lastNameCtrl,
+                    validator: (value) => _isNotEmpty(value, 'apellidos'),
+                    onFieldSubmitted: (value) {
+                      if (_formKey.currentState!.validate()) {
+                        _getApoderados();
+                      }
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _getApoderados();
+                          }
+                        },
+                        icon: const ImageIcon(
+                          AssetImage('assets/icons/search.png'),
+                          color: Colors.black,
+                          size: 15,
+                        ),
+                      ),
+                      hintText: 'Buscar apoderado por apellidos',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6)),
                     ),
-                    hintText: 'Buscar apoderado',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6)),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
               Expanded(
-                  child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: DataTable(columns: const [
-                  DataColumn(label: Text('#')),
-                  DataColumn(label: Text('ApellidoS')),
-                  DataColumn(label: Text('Nombre(s)')),
-                  DataColumn(label: Text('CORREO ELECTRONICO')),
-                  DataColumn(label: Text('Accion')),
-                ], rows: [
-                  DataRow(cells: [
-                    const DataCell(Text('1')),
-                    const DataCell(Text('García Encino')),
-                    const DataCell(Text('Katia Alejandra')),
-                    const DataCell(Text('katialejandra0@outlook.com')),
-                    DataCell(Checkbox(value: true, onChanged: (value) => null)),
-                  ])
-                ]),
-              )),
+                  child: GetBuilder<StudsProxiesEditLogic>(
+                      id: 'apoderados',
+                      builder: (_) {
+                        final apoderadoModel = _.apoderadoModel;
+                        return apoderadoModel != null
+                            ? apoderadoModel.apoderados.isNotEmpty
+                                ? SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    child: DataTable(
+                                        columns: const [
+                                          DataColumn(label: Text('#')),
+                                          DataColumn(label: Text('Apellidos')),
+                                          DataColumn(label: Text('Nombre(s)')),
+                                          DataColumn(
+                                              label:
+                                                  Text('CORREO ELECTRONICO')),
+                                          DataColumn(label: Text('Accion')),
+                                        ],
+                                        rows:
+                                            apoderadoModel.apoderados.map((e) {
+                                          int index = apoderadoModel.apoderados
+                                                  .indexOf(e) +
+                                              1;
+                                          return DataRow(cells: [
+                                            DataCell(Text(index.toString())),
+                                            DataCell(Text(e.lastname)),
+                                            DataCell(Text(e.name)),
+                                            DataCell(Text(e.correo)),
+                                            DataCell(Checkbox(
+                                                value: apoderado != null
+                                                    ? apoderado == e
+                                                        ? true
+                                                        : false
+                                                    : false,
+                                                onChanged: (value) =>
+                                                    onSelectApod(e))),
+                                          ]);
+                                        }).toList()),
+                                  )
+                                : const Center(
+                                    child: Text('No hay datos'),
+                                  )
+                            : const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                      })),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
@@ -369,7 +478,7 @@ class StudsProxiesEditLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.white),
-                        onPressed: () => null,
+                        onPressed: _closeDialog,
                         child: const Text(
                           'Cancelar',
                           style: TextStyle(
@@ -385,7 +494,38 @@ class StudsProxiesEditLogic extends GetxController {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             primary: const Color(0xff2E65F3)),
-                        onPressed: () => null,
+                        onPressed: () async {
+                          if (apoderado != null) {
+                            final token = await AuthService.to.getToken();
+                            if (token != null) {
+                              DialogService.to.openDialog();
+                              final estudianteUpd =
+                                  await _dbRepository.updateEstudiante(
+                                      token: token,
+                                      idapoderado: apoderado!.id,
+                                      id: e.id,
+                                      name: e.name,
+                                      lastname: e.lastname,
+                                      correo: e.correo,
+                                      idSubNivel: e.idSubNivel);
+                              DialogService.to.closeDialog();
+                              if (estudianteUpd) {
+                                _apoderadoModel = null;
+                                update(['students', 'apoderados']);
+                                _lastNameCtrl.clear();
+                                _closeDialog();
+                              } else {
+                                DialogService.to.snackBar(Colors.red, 'ERROR',
+                                    'No pudimos actualizar el apoderado');
+                              }
+                            } else {
+                              Get.rootDelegate.toNamed(Routes.login);
+                            }
+                          } else {
+                            DialogService.to.snackBar(
+                                Colors.red, 'ERROR', 'Seleccione un apoderado');
+                          }
+                        },
                         child: const Text(
                           'Modificar',
                           style: TextStyle(
@@ -401,5 +541,19 @@ class StudsProxiesEditLogic extends GetxController {
         ),
       ),
     ));
+  }
+
+  void _closeDialog() {
+    Get.back();
+  }
+
+  void onSelectApod(Apoderado e) {
+    _apoderado = e;
+    update(['apoderados']);
+  }
+
+  String? _isNotEmpty(String? value, String label) {
+    if (value != null) if (value.isNotEmpty) return null;
+    return 'Ingrese $label';
   }
 }

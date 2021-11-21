@@ -34,7 +34,7 @@ class ProxiesLogic extends GetxController {
   void _getProxies() async {
     final token = await AuthService.to.getToken();
     if (token != null) {
-      _apoderadoModel = await _dbRepository.getApoderado(token: token);
+      _apoderadoModel = await _dbRepository.getApoderados(token: token);
     } else {
       Get.rootDelegate.toNamed(Routes.login);
     }

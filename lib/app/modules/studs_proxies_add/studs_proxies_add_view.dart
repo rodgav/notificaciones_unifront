@@ -127,7 +127,7 @@ class StudsProxiesAddPage extends StatelessWidget {
                                                           color: Colors.green,
                                                         ),
                                                         onTap: () => logic
-                                                            .addProxie(size),
+                                                            .addProxie(size,e),
                                                       ),
                                                     )),
                                                   ]);

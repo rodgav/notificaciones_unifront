@@ -19,9 +19,9 @@ class NotifSendPage extends StatelessWidget {
             return AppBar(
               backgroundColor: Colors.white,
               title: Text(
-                'Notificaciones > ${nivel != null ? nivel.name : ''} > ${subNivel!=null ? subNivel.name  : ''}',
-                style:
-                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                'Notificaciones > ${nivel != null ? nivel.name : ''} > ${subNivel != null ? subNivel.name : ''}',
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
               ),
             );
           }),
@@ -50,6 +50,7 @@ class NotifSendPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                           padding: const EdgeInsets.all(30),
                           child: Form(
+                            key: logic.formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -72,6 +73,9 @@ class NotifSendPage extends StatelessWidget {
                                 Container(
                                   color: Colors.white,
                                   child: TextFormField(
+                                    controller: logic.titleCtrl,
+                                    validator: (value) =>
+                                        logic.isNotEmpty(value, 'un título'),
                                     decoration: InputDecoration(
                                       hintText: 'Título',
                                       border: OutlineInputBorder(
@@ -88,27 +92,33 @@ class NotifSendPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 10),
-                                Container(
-                                  color: Colors.white,
-                                  child: TextFormField(
-                                    controller: logic.dateCtrl,
-                                    decoration: InputDecoration(
-                                      prefixIcon: GestureDetector(
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: ImageIcon(
-                                            AssetImage(
-                                                'assets/icons/calendar.png'),
-                                            size: 10,
+                                MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: logic.onSelectDate,
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: TextFormField(
+                                        enabled: false,
+                                        controller: logic.dateCtrl,
+                                        validator: (value) =>
+                                            logic.isNotEmpty(value, 'un fecha'),
+                                        decoration: InputDecoration(
+                                          prefixIcon: const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: ImageIcon(
+                                              AssetImage(
+                                                  'assets/icons/calendar.png'),
+                                              size: 10,
+                                            ),
                                           ),
+                                          hintText:
+                                              'Seleccione fecha de vencimiento',
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(6)),
                                         ),
-                                        onTap: logic.onSelectDate,
                                       ),
-                                      hintText:
-                                          'Seleccione fecha de vencimiento',
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6)),
                                     ),
                                   ),
                                 ),
@@ -123,6 +133,9 @@ class NotifSendPage extends StatelessWidget {
                                 Container(
                                   color: Colors.white,
                                   child: TextFormField(
+                                    controller: logic.messageCtrl,
+                                    validator: (value) =>
+                                        logic.isNotEmpty(value, 'un mensaje'),
                                     maxLines: 8,
                                     decoration: InputDecoration(
                                       hintText: 'Mensaje',
@@ -163,7 +176,12 @@ class NotifSendPage extends StatelessWidget {
                                             style: ElevatedButton.styleFrom(
                                                 primary:
                                                     const Color(0xff4C6FFF)),
-                                            onPressed: logic.send,
+                                            onPressed: () {
+                                              if (logic.formKey.currentState!
+                                                  .validate()) {
+                                                logic.send();
+                                              }
+                                            },
                                             child: const Text('Enviar')),
                                       ),
                                     ],

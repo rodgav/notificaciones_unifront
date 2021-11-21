@@ -112,6 +112,40 @@ class DbProvider {
     }
   }
 
+  Future<bool> updateEstudiante(
+      {required String token,
+      required int idapoderado,
+      required int id,
+      required String name,
+      required String lastname,
+      required String correo,
+      required int idSubNivel}) async {
+    final password = name.toLowerCase().replaceAll(' ', '');
+    try {
+      final json = {
+        'idapoderado': idapoderado,
+        'name': name,
+        'lastname': lastname,
+        'correo': correo,
+        'password': password,
+        'idSubNivel': idSubNivel
+      };
+      final result = await _http.request('estudiante/$id',
+          method: HttpMethod.put,
+          headers: {'Authorization': token},
+          body: {'json': jsonEncode(json)});
+      debugPrint('result ${result.data}');
+      final data = result.data as Map<String, dynamic>;
+      if (data['status'] == 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<Apoderado?> createApoderado(
       {required String token,
       required String name,
@@ -167,12 +201,9 @@ class DbProvider {
   }
 
   Future<Apoderado?> deleteApoderado(
-      {required String token,
-      required int id}) async {
+      {required String token, required int id}) async {
     try {
-      final json = {
-        'role': 'proxie'
-      };
+      final json = {'role': 'proxie'};
       final result = await _http.request('apoderado/$id',
           method: HttpMethod.delete,
           headers: {'Authorization': token},
@@ -198,13 +229,80 @@ class DbProvider {
     }
   }
 
-  Future<ApoderadoModel?> getApoderado({required String token}) async {
+  Future<ApoderadoModel?> getApoderados({required String token}) async {
     try {
       final result = await _http.request('apoderados',
           method: HttpMethod.get, headers: {'Authorization': token});
       return ApoderadoModel.fromJson(result.data);
     } catch (_) {
       return null;
+    }
+  }
+
+  Future<Apoderado?> getApoderado(
+      {required String token, required String idApoderado}) async {
+    try {
+      final result = await _http.request('apoderado',
+          method: HttpMethod.get,
+          headers: {'Authorization': token},
+          queryParameters: {'idApoderado': idApoderado});
+      final data = result.data as Map<String, dynamic>;
+      return Apoderado.fromJson(data['apoderado']);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<bool> sendNotifAll(
+      {required String token,
+      required String title,
+      required String message,
+      required DateTime dateTime}) async {
+    try {
+      final json = {
+        'titulo': title,
+        'mensaje': message,
+        'date_limit': dateTime.toString()
+      };
+      final result = await _http.request('notificacionesAll',
+          method: HttpMethod.post,
+          headers: {'Authorization': token},
+          body: {'json': jsonEncode(json)});
+      final data = result.data as Map<String, dynamic>;
+      if (data['status'] == 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> sendNotifGra(
+      {required String token,
+      required String idSubNivel,
+      required String title,
+      required String message,
+      required DateTime dateTime}) async {
+    try {
+      final json = {
+        'titulo': title,
+        'mensaje': message,
+        'date_limit': dateTime.toString()
+      };
+      final result = await _http.request('notificacionesGrade/$idSubNivel',
+          method: HttpMethod.post,
+          headers: {'Authorization': token},
+          body: {'json': jsonEncode(json)});
+      final data = result.data as Map<String, dynamic>;
+      if (data['status'] == 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
     }
   }
 }

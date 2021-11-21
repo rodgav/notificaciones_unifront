@@ -6,6 +6,7 @@ import 'package:notificaciones_unifront/app/data/models/nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/models/sub_nivel_model.dart';
 import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
 import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/data/services/dialog_service.dart';
 import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class StudsProxiesAddLogic extends GetxController {
@@ -19,15 +20,12 @@ class StudsProxiesAddLogic extends GetxController {
   final TextEditingController _lastNameCtrl = TextEditingController();
 
   EstudianteModel? _estudianteModel;
-  Estudiante? _estudiante;
   Nivele? _nivele;
   SubNivele? _subNivele;
   ApoderadoModel? _apoderadoModel;
   Apoderado? _apoderado;
 
   EstudianteModel? get estudianteModel => _estudianteModel;
-
-  Estudiante? get estudiante => _estudiante;
 
   Nivele? get nivele => _nivele;
 
@@ -83,7 +81,7 @@ class StudsProxiesAddLogic extends GetxController {
     update(['apoderados']);
   }
 
-  void addProxie(Size size) {
+  void addProxie(Size size, Estudiante e) {
     Get.dialog(Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
@@ -97,13 +95,14 @@ class StudsProxiesAddLogic extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children:  [
-                  const  Text(
+                children: [
+                  const Text(
                     'Agregar apoderado',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const Expanded(child: SizedBox()),
-                  IconButton(icon:const Icon(Icons.close), onPressed: _closeDialog)
+                  IconButton(
+                      icon: const Icon(Icons.close), onPressed: _closeDialog)
                 ],
               ),
               const SizedBox(height: 10),
@@ -119,6 +118,11 @@ class StudsProxiesAddLogic extends GetxController {
                   child: TextFormField(
                     controller: _lastNameCtrl,
                     validator: (value) => _isNotEmpty(value, 'apellidos'),
+                    onFieldSubmitted: (value) {
+                      if (_formKey.currentState!.validate()) {
+                        _getApoderados();
+                      }
+                    },
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -152,7 +156,7 @@ class StudsProxiesAddLogic extends GetxController {
                                     child: DataTable(
                                         columns: const [
                                           DataColumn(label: Text('#')),
-                                          DataColumn(label: Text('ApellidoS')),
+                                          DataColumn(label: Text('Apellidos')),
                                           DataColumn(label: Text('Nombre(s)')),
                                           DataColumn(
                                               label:
@@ -213,7 +217,40 @@ class StudsProxiesAddLogic extends GetxController {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             primary: const Color(0xff2E65F3)),
-                        onPressed: () => null,
+                        onPressed: () async {
+                          if (apoderado != null) {
+                            final token = await AuthService.to.getToken();
+                            if (token != null) {
+                              DialogService.to.openDialog();
+                              final estudianteUpd =
+                                  await _dbRepository.updateEstudiante(
+                                      token: token,
+                                      idapoderado: apoderado!.id,
+                                      id: e.id,
+                                      name: e.name,
+                                      lastname: e.lastname,
+                                      correo: e.correo,
+                                      idSubNivel: e.idSubNivel);
+                              DialogService.to.closeDialog();
+                              if (estudianteUpd) {
+                                _estudianteModel!.estudiantes.removeWhere(
+                                    (element) => element.id == e.id);
+                                _apoderadoModel = null;
+                                update(['students', 'apoderados']);
+                                _lastNameCtrl.clear();
+                                _closeDialog();
+                              } else {
+                                DialogService.to.snackBar(Colors.red, 'ERROR',
+                                    'No pudimos actualizar el apoderado');
+                              }
+                            } else {
+                              Get.rootDelegate.toNamed(Routes.login);
+                            }
+                          } else {
+                            DialogService.to.snackBar(
+                                Colors.red, 'ERROR', 'Seleccione un apoderado');
+                          }
+                        },
                         child: const Text(
                           'Agregar',
                           style: TextStyle(
