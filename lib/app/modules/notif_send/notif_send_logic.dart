@@ -124,7 +124,7 @@ class NotifSendLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.white),
-                        onPressed: () => null,
+                        onPressed: _closeDialog,
                         child: const Text(
                           'No. Cancelar',
                           style: TextStyle(
@@ -138,7 +138,11 @@ class NotifSendLogic extends GetxController {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.red),
-                        onPressed: () => null,
+                        onPressed: () {
+                          titleCtrl.clear();
+                          messageCtrl.clear();
+                          dateCtrl.clear();
+                        },
                         child: const Text(
                           'Si. Continuar',
                           style: TextStyle(
