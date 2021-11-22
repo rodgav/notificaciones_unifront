@@ -52,6 +52,6 @@ class LoginLogic extends GetxController {
 
   isNotEmpty(String? value) {
     if (value != null) if (value.isNotEmpty) return null;
-    return 'Ingre su contraseña';
+    return 'Ingrese su contraseña';
   }
 }
