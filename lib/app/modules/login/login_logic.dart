@@ -13,8 +13,10 @@ class LoginLogic extends GetxController {
 
   void toHome() async {
     if (formKey.currentState!.validate()) {
+      DialogService.to.openDialog();
       final tokenModel = await _dbRepository.login(
           correo: correoCtrl.text.trim(), password: passwordCtrl.text.trim());
+      DialogService.to.closeDialog();
       if (tokenModel != null && tokenModel.jwt != null) {
         await AuthService.to.saveSession(tokenModel);
         Get.rootDelegate.toNamed(Routes.home);
