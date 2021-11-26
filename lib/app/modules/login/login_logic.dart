@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:notificaciones_unifront/app/data/repositorys/db_repository.dart';
 import 'package:notificaciones_unifront/app/data/services/auth_service.dart';
+import 'package:notificaciones_unifront/app/data/services/dialog_service.dart';
 import 'package:notificaciones_unifront/app/routes/app_pages.dart';
 
 class LoginLogic extends GetxController {
@@ -18,30 +19,18 @@ class LoginLogic extends GetxController {
         await AuthService.to.saveSession(tokenModel);
         Get.rootDelegate.toNamed(Routes.home);
       } else {
-        _snackBar(Colors.red, 'Error', 'contraseña/usuario incorrecto');
+        DialogService.to
+            .snackBar(Colors.red, 'Error', 'contraseña/usuario incorrecto');
       }
     }
   }
 
- /* @override
+  /*@override
   void onReady() {
-    correoCtrl.text = 'prueba@gmail.com';
-    passwordCtrl.text = '12345678';
+    //correoCtrl.text = 'prueba@gmail.com';
+    //passwordCtrl.text = '12345678';
     super.onReady();
   }*/
-
-  void _snackBar(Color color, String title, String body) {
-    Get.snackbar(
-      title,
-      body,
-      colorText: color,
-      snackPosition: SnackPosition.BOTTOM,
-      isDismissible: true,
-      dismissDirection: SnackDismissDirection.HORIZONTAL,
-      forwardAnimationCurve: Curves.easeOutBack,
-      margin: const EdgeInsets.all(15),
-    );
-  }
 
   validateEmail(String? value) {
     Pattern pattern =

@@ -71,12 +71,6 @@ class StudsProxiesAddPage extends StatelessWidget {
                                                                   FontWeight
                                                                       .bold))),
                                                   DataColumn(
-                                                      label: Text('APODERADO',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold))),
-                                                  DataColumn(
                                                       label: Text('APELLIDOS',
                                                           style: TextStyle(
                                                               fontWeight:
@@ -106,10 +100,6 @@ class StudsProxiesAddPage extends StatelessWidget {
                                                         width: size.width * 0.02,
                                                         child: Text(
                                                             index.toString()))),
-                                                    DataCell(SizedBox(
-                                                        width: size.width * 0.1,
-                                                        child: Text(
-                                                            '${e.apoderado.lastname} ${e.apoderado.name}'))),
                                                     DataCell(SizedBox(
                                                         width: size.width * 0.1,
                                                         child:
