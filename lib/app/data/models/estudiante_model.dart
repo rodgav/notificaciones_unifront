@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:notificaciones_unifront/app/data/models/apoderado_model.dart';
+
 EstudianteModel estudianteModelFromJson(String str) => EstudianteModel.fromJson(json.decode(str));
 
 String estudianteModelToJson(EstudianteModel data) => json.encode(data.toJson());
@@ -43,10 +45,10 @@ class Estudiante {
     required this.name,
     required this.lastname,
     required this.correo,
-    required this.password,
     required this.idSubNivel,
     required this.createdAt,
     required this.updatedAt,
+    required this.apoderado,
   });
 
   int id;
@@ -54,21 +56,21 @@ class Estudiante {
   String name;
   String lastname;
   String correo;
-  String password;
   int idSubNivel;
   DateTime createdAt;
   DateTime updatedAt;
+  Apoderado apoderado;
 
   factory Estudiante.fromJson(Map<String, dynamic> json) => Estudiante(
     id: json["id"],
-    idapoderado: json["idapoderado"]??0,
+    idapoderado: json["idapoderado"],
     name: json["name"],
     lastname: json["lastname"],
     correo: json["correo"],
-    password: json["password"],
     idSubNivel: json["idSubNivel"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
+    apoderado: Apoderado.fromJson(json["apoderado"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,9 +79,10 @@ class Estudiante {
     "name": name,
     "lastname": lastname,
     "correo": correo,
-    "password": password,
     "idSubNivel": idSubNivel,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
+    "apoderado": apoderado.toJson(),
   };
 }
+

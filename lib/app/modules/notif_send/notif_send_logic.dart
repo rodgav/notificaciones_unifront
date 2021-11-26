@@ -296,13 +296,13 @@ class NotifSendLogic extends GetxController {
               ),
               const SizedBox(height: 30),
               const Text(
-                '¡Creación de apoderado exitoso!',
+                '¡Envío exitoso!',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 30),
               const Expanded(
                 child: Text(
-                  'Se ha creado exitosamente el nuevo apoderado',
+                  'Se ha enviado exitosamente su notificación',
                   style: TextStyle(fontSize: 16),
                 ),
               ),

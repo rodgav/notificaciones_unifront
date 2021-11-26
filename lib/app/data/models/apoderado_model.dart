@@ -42,7 +42,6 @@ class Apoderado {
     required this.name,
     required this.lastname,
     required this.correo,
-    required this.password,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -51,7 +50,6 @@ class Apoderado {
   String name;
   String lastname;
   String correo;
-  String password;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -60,7 +58,6 @@ class Apoderado {
     name: json["name"],
     lastname: json["lastname"],
     correo: json["correo"],
-    password: json["password"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );
@@ -70,7 +67,6 @@ class Apoderado {
     "name": name,
     "lastname": lastname,
     "correo": correo,
-    "password": password,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
   };

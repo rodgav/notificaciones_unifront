@@ -510,8 +510,9 @@ class StudsProxiesEditLogic extends GetxController {
                                       idSubNivel: e.idSubNivel);
                               DialogService.to.closeDialog();
                               if (estudianteUpd) {
+                                _getEstudiantes();
                                 _apoderadoModel = null;
-                                update(['students', 'apoderados']);
+                                update(['apoderados']);
                                 _lastNameCtrl.clear();
                                 _closeDialog();
                               } else {

@@ -18,17 +18,17 @@ class LoginLogic extends GetxController {
         await AuthService.to.saveSession(tokenModel);
         Get.rootDelegate.toNamed(Routes.home);
       } else {
-        _snackBar(Colors.red, 'Error', 'Usuario y contraseña incorrectos');
+        _snackBar(Colors.red, 'Error', 'contraseña/usuario incorrecto');
       }
     }
   }
 
-  @override
+ /* @override
   void onReady() {
     correoCtrl.text = 'prueba@gmail.com';
     passwordCtrl.text = '12345678';
     super.onReady();
-  }
+  }*/
 
   void _snackBar(Color color, String title, String body) {
     Get.snackbar(
