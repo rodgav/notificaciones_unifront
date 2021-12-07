@@ -238,10 +238,10 @@ class StudsProxiesAddLogic extends GetxController {
                                 _apoderadoModel = null;
                                 update(['students', 'apoderados']);
                                 _lastNameCtrl.clear();
-                                _closeDialog();
+                                _success();
                               } else {
                                 DialogService.to.snackBar(Colors.red, 'ERROR',
-                                    'No pudimos actualizar el apoderado');
+                                    'No pudimos agregar el apoderado');
                               }
                             } else {
                               Get.rootDelegate.toNamed(Routes.login);
@@ -275,5 +275,60 @@ class StudsProxiesAddLogic extends GetxController {
   void onSelectApod(Apoderado e) {
     _apoderado = e;
     update(['apoderados']);
+  }
+
+  void _success() {
+    Get.dialog(Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: Container(
+          width: 480,
+          height: 215,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                    color: Colors.green, shape: BoxShape.circle),
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.check, color: Colors.white),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                '¡Apoderado asignado!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 30),
+              const Expanded(
+                child: Text(
+                  'Se ha asignado un apoderado correctamente',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: const Color(0xff2E65F3)),
+                  onPressed: () {
+                    _closeDialog();
+                    _closeDialog();
+                  },
+                  child: const Text(
+                    'Aceptar',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 }
